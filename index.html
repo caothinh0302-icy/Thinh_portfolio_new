@@ -450,6 +450,272 @@
 <footer>
   Thinh Hoang Cao — Biomedical Engineering, UT Dallas &nbsp;·&nbsp; Portfolio last updated for review
 </footer>
+<!-- ============ INTERACTIVE 1-PAGE OVERVIEW & PROJECT VIEW UPGRADE ============ -->
+<style>
+  /* 1. Hide all project sections on the general overview page */
+  .project {
+    display: none !important;
+  }
 
+  /* 2. Show ONLY the selected project when clicked */
+  .project.active-project {
+    display: block !important;
+    animation: blueprintFadeIn 0.25s ease-out;
+  }
+
+  @keyframes blueprintFadeIn {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* 3. Upgrade the .toc nav into large, readable 2x2 Blueprint Project Cards */
+  .toc {
+    display: grid !important;
+    grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)) !important;
+    gap: 18px !important;
+    background: transparent !important;
+    border: none !important;
+    margin: 40px 0 10px !important;
+  }
+
+  @media (max-width: 640px) {
+    .toc { grid-template-columns: 1fr !important; }
+  }
+
+  .toc a {
+    background: var(--bg-panel) !important;
+    border: 1px solid var(--grid-line-strong) !important;
+    padding: 26px !important;
+    border-radius: 4px !important;
+    text-decoration: none !important;
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: space-between !important;
+    transition: transform 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease !important;
+    position: relative !important;
+  }
+
+  .toc a:hover {
+    background: #142230 !important;
+    border-color: var(--amber) !important;
+    transform: translateY(-4px) !important;
+    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.45) !important;
+  }
+
+  .toc-card-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+  }
+
+  .toc .num {
+    font-family: 'IBM Plex Mono', monospace !important;
+    font-size: 12px !important;
+    color: var(--amber) !important;
+    letter-spacing: 0.1em !important;
+  }
+
+  .toc .name {
+    font-family: 'Space Grotesk', sans-serif !important;
+    color: var(--ink) !important;
+    font-size: 22px !important;
+    margin-top: 4px !important;
+    margin-bottom: 10px !important;
+    font-weight: 600 !important;
+  }
+
+  .toc-desc {
+    color: var(--ink-dim);
+    font-size: 14.5px;
+    line-height: 1.55;
+    margin-bottom: 18px;
+  }
+
+  .toc-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 18px;
+  }
+
+  .toc-tag {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    color: var(--cyan);
+    background: rgba(111, 183, 201, 0.08);
+    border: 1px solid rgba(111, 183, 201, 0.28);
+    padding: 3px 9px;
+    border-radius: 3px;
+  }
+
+  .toc-cta {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12px;
+    color: var(--amber);
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  /* 4. Style the "Back to All Projects" button inside each project page */
+  .back-overview-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 13px;
+    color: var(--amber);
+    background: var(--bg-panel);
+    border: 1px solid var(--amber);
+    padding: 10px 18px;
+    border-radius: 3px;
+    cursor: pointer;
+    margin-bottom: 32px;
+    transition: background 0.15s ease, transform 0.15s ease;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+
+  .back-overview-btn:hover {
+    background: rgba(232, 147, 74, 0.14);
+    transform: translateX(-3px);
+  }
+
+  /* 5. When viewing a single project, compact the hero and hide the overview cards */
+  body.project-open .hero {
+    padding: 36px 28px 28px !important;
+  }
+  body.project-open .hero-note,
+  body.project-open .toc {
+    display: none !important;
+  }
+</style>
+
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    const tocLinks = document.querySelectorAll(".toc a");
+    const projects = document.querySelectorAll(".project");
+
+    // Card metadata matching your 4 projects & blueprint status badges
+    const cardData = [
+      {
+        code: "PROJECT 01 / MECHATRONICS",
+        statusText: "Built & Tested",
+        statusClass: "status-built",
+        desc: "Tendon-driven prosthetic hand actuated by a single high-torque servo with FSR haptic grip control and custom SolidWorks casing.",
+        tags: ["SolidWorks", "Arduino Nano", "FSR Haptics", "FDM 3D Printing", "FMEA"]
+      },
+      {
+        code: "PROJECT 02 / BIOMECHANICS",
+        statusText: "Built & Tested",
+        statusClass: "status-built",
+        desc: "Wearable knee kinematics and rehabilitation tracker using dual accelerometers/gyroscopes and FSRs to monitor flexion angles and ground forces.",
+        tags: ["Dual IMUs", "FSR Sensors", "Kinematics", "Signal Processing"]
+      },
+      {
+        code: "PROJECT 03 / BIO-3D PRINTING",
+        statusText: "Active Research",
+        statusClass: "status-wip",
+        desc: "3D hybrid microfluidic drop-on-demand bioprinter using pneumatic microvalves, custom Python control software, and Klipper/Marlin firmware.",
+        tags: ["Python", "Microfluidics", "Pneumatics", "Klipper / G-Code", "SolidWorks"]
+      },
+      {
+        code: "PROJECT 04 / MEDICAL DEVICES",
+        statusText: "Prototype",
+        statusClass: "status-concept",
+        desc: "Wearable maternal vital sign monitor integrating heart-rate/PPG sensors, pressure sensors, an OLED display, and real-time alerts.",
+        tags: ["PPG Biosignals", "Pressure Sensors", "OLED Display", "Embedded C++"]
+      }
+    ];
+
+    // Upgrade the 4 .toc links into rich Blueprint Cards
+    tocLinks.forEach((link, idx) => {
+      const info = cardData[idx];
+      const nameEl = link.querySelector(".name");
+      const titleText = nameEl ? nameEl.textContent : "Project " + (idx + 1);
+
+      if (info) {
+        link.innerHTML = `
+          <div>
+            <div class="toc-card-top">
+              <div class="num">${info.code}</div>
+              <div class="status ${info.statusClass}">${info.statusText}</div>
+            </div>
+            <div class="name">${titleText}</div>
+            <div class="toc-desc">${info.desc}</div>
+          </div>
+          <div>
+            <div class="toc-tags">
+              ${info.tags.map(t => `<span class="toc-tag">${t}</span>`).join("")}
+            </div>
+            <div class="toc-cta">Open Project Documentation &amp; Media →</div>
+          </div>
+        `;
+      }
+    });
+
+    // Add a "← Back to All Projects" button at the top of each project section
+    projects.forEach((sec) => {
+      const wrap = sec.querySelector(".wrap") || sec;
+      const backBtn = document.createElement("button");
+      backBtn.className = "back-overview-btn";
+      backBtn.innerHTML = "← Back to Project Overview";
+      backBtn.addEventListener("click", () => {
+        showOverview();
+      });
+      wrap.insertBefore(backBtn, wrap.firstChild);
+    });
+
+    function openProject(id) {
+      projects.forEach(p => {
+        p.classList.remove("active-project");
+        // Pause any playing videos when switching projects
+        p.querySelectorAll("video").forEach(v => v.pause());
+      });
+      const target = document.getElementById(id);
+      if (target) {
+        document.body.classList.add("project-open");
+        target.classList.add("active-project");
+        window.scrollTo({ top: 0, behavior: "smooth" });
+        history.pushState(null, null, "#" + id);
+      }
+    }
+
+    function showOverview() {
+      projects.forEach(p => {
+        p.classList.remove("active-project");
+        p.querySelectorAll("video").forEach(v => v.pause());
+      });
+      document.body.classList.remove("project-open");
+      window.scrollTo({ top: 0, behavior: "smooth" });
+      history.pushState(null, null, window.location.pathname);
+    }
+
+    // Connect card clicks to open the matching project
+    tocLinks.forEach((link) => {
+      link.addEventListener("click", (e) => {
+        e.preventDefault();
+        const targetId = link.getAttribute("href").replace("#", "");
+        openProject(targetId);
+      });
+    });
+
+    // Support direct URLs (like #prosthetic) and Browser Back/Forward buttons
+    function syncWithHash() {
+      const hash = window.location.hash.replace("#", "");
+      if (hash && document.getElementById(hash)) {
+        openProject(hash);
+      } else {
+        showOverview();
+      }
+    }
+
+    syncWithHash();
+    window.addEventListener("popstate", syncWithHash);
+  });
+</script>
 </body>
 </html>
